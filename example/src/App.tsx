@@ -9,6 +9,7 @@ import {
   DefaultEntityRegistry,
 } from "stripe-onboarding-schema";
 import Stripe from "stripe";
+import Entity from "stripe-onboarding-schema/dist/schema-core/Entity";
 
 const entityRegistry = DefaultEntityRegistry.make();
 const requirementsConverter = new RequirementsConverter(entityRegistry);
@@ -38,8 +39,12 @@ class App extends React.Component<{}, State> {
           parsedRequirements,
           this.state.requirementsType
         );
-        console.log(schema);
-        uiSchemaJson = JSON.stringify(schema, null, 4);
+        const fieldMap = Array.from(schema.fieldMap.entries()).reduce(
+          (obj: {}, [key, value]) => ({ ...obj, [key]: value }),
+          {}
+        );
+
+        uiSchemaJson = JSON.stringify(fieldMap, null, 2);
       } catch (e) {
         uiSchemaJson = "Invalid requirements json";
       }
@@ -65,7 +70,9 @@ class App extends React.Component<{}, State> {
             </Panel>
           </div>
           <div className="p-col">
-            <Panel header="UI Schema">{uiSchemaJson}</Panel>
+            <Panel header="UI Schema">
+              <pre>{uiSchemaJson}</pre>
+            </Panel>
           </div>
           <div className="p-col">
             <Panel header="UI Form"></Panel>
