@@ -9,24 +9,13 @@ import "primeflex/primeflex.css";
 import {
   RequirementsConverter,
   DefaultEntityRegistry,
+  RequirementsType,
+  Country,
 } from "stripe-onboarding-schema";
 import Stripe from "stripe";
 
 const entityRegistry = DefaultEntityRegistry.make();
 const requirementsConverter = new RequirementsConverter(entityRegistry);
-
-enum RequirementsType {
-  PAST_DUE = "past_due",
-  CURRENTLY_DUE = "currently_due",
-  EVENTUALLY_DUE = "eventually_due",
-}
-
-enum Country {
-  US = "US",
-  CA = "CA",
-  GB = "GB",
-  FR = "FR",
-}
 
 type State = {
   requirements?: string | undefined;
