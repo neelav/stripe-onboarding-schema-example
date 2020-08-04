@@ -10,7 +10,7 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.1",
     "stripe": "^8.81.0",
-    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema"
+    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema#release-0.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
