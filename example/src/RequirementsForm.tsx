@@ -57,13 +57,15 @@ function formSection(
 ): ReactFragment {
   const formElements = (requirements || []).map((r) => (
     <div key={r.field.id} className="p-field p-grid">
-      <label
-        htmlFor={r.requirementId}
-        style={{ width: "100px", overflowWrap: "anywhere" }}
-      >
-        <div className="p-col">{r.field.name}</div>
+      <label>
+        <div
+          className="p-col"
+          style={{ width: "100px", overflowWrap: "anywhere" }}
+        >
+          {r.field.name}
+        </div>
+        {makeRequirementElement(r)}
       </label>
-      {makeRequirementElement(r)}
     </div>
   ));
   return <React.Fragment>{formElements}</React.Fragment>;
