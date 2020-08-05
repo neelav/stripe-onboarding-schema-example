@@ -13,6 +13,8 @@ import {
   Country,
 } from "stripe-onboarding-schema";
 import Stripe from "stripe";
+import RequirementsForm from "./RequirementsForm";
+import OnboardingSchema from "stripe-onboarding-schema/onboarding/OnboardingSchema";
 
 const entityRegistry = DefaultEntityRegistry.make();
 const requirementsConverter = new RequirementsConverter(entityRegistry);
@@ -33,25 +35,28 @@ class App extends React.Component<{}, State> {
   }
 
   render() {
-    let uiSchemaJson;
+    let requirementsSchema: OnboardingSchema | undefined;
+    let uiSchemaJson: string | undefined;
     if (this.state.requirements) {
       try {
         const parsedRequirements = JSON.parse(
           this.state.requirements
         ) as Stripe.Account.Requirements;
 
-        const schema = requirementsConverter.convertRequirements(
+        requirementsSchema = requirementsConverter.convertRequirements(
           parsedRequirements,
           this.state.requirementsType
         );
-        const fieldMap = Array.from(schema.fieldMap.entries()).reduce(
-          (obj: {}, [key, value]) => ({ ...obj, [key]: value }),
-          {}
-        );
+      } catch (e) {}
+
+      if (!requirementsSchema) {
+        uiSchemaJson = "Invalid requirements json";
+      } else {
+        const fieldMap = Array.from(
+          requirementsSchema.fieldMap.entries()
+        ).reduce((obj: {}, [key, value]) => ({ ...obj, [key]: value }), {});
 
         uiSchemaJson = JSON.stringify(fieldMap, null, 2);
-      } catch (e) {
-        uiSchemaJson = "Invalid requirements json";
       }
     }
 
@@ -117,7 +122,11 @@ class App extends React.Component<{}, State> {
             </div>
           </div>
           <div className="main p-col">
-            <Panel header="3. UI Form"></Panel>
+            <Panel header="3. UI Form">
+              {requirementsSchema && (
+                <RequirementsForm schema={requirementsSchema} />
+              )}
+            </Panel>
           </div>
           <div className="main p-col">
             <Panel header="4. Output"></Panel>
