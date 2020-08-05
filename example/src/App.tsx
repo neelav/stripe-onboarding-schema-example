@@ -129,7 +129,7 @@ class App extends React.Component<{}, State> {
             </Panel>
           </div>
           <div className="main p-col">
-            <Panel header="4. Output"></Panel>
+            <Panel header="4. Form State"></Panel>
           </div>
         </div>
       </div>
