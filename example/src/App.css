@@ -1,5 +1,6 @@
 .main .p-panel-content {
   height: 800px;
+  max-width: 600px;
   overflow: scroll;
 }
 
