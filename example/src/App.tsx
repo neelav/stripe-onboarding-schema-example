@@ -13,7 +13,7 @@ import {
   Country,
 } from "stripe-onboarding-schema";
 import Stripe from "stripe";
-import RequirementsForm from "./RequirementsForm";
+import RequirementsForm, { FormValues } from "./RequirementsForm";
 import OnboardingSchema from "stripe-onboarding-schema/onboarding/OnboardingSchema";
 
 const entityRegistry = DefaultEntityRegistry.make();
@@ -23,6 +23,7 @@ type State = {
   requirements?: string | undefined;
   requirementsType: RequirementsType;
   country: Country;
+  formValues: FormValues;
 };
 
 class App extends React.Component<{}, State> {
@@ -31,6 +32,7 @@ class App extends React.Component<{}, State> {
     this.state = {
       requirementsType: RequirementsType.PAST_DUE,
       country: Country.US,
+      formValues: {},
     };
   }
 
@@ -124,12 +126,20 @@ class App extends React.Component<{}, State> {
           <div className="main p-col">
             <Panel header="3. UI Form">
               {requirementsSchema && (
-                <RequirementsForm schema={requirementsSchema} />
+                <RequirementsForm
+                  schema={requirementsSchema}
+                  values={this.state.formValues}
+                  onChange={(formValues) =>
+                    this.setState({ ...this.state, formValues })
+                  }
+                />
               )}
             </Panel>
           </div>
           <div className="main p-col">
-            <Panel header="4. Form State"></Panel>
+            <Panel header="4. Form State">
+              <pre>{JSON.stringify(this.state.formValues, undefined, 2)}</pre>
+            </Panel>
           </div>
         </div>
       </div>
