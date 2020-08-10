@@ -99,9 +99,9 @@ function makeRequirementElement(
     newFormValues[requirement.entityType][
       requirement.entityToken || ""
     ] = container;
-    requirement.field.setValue(container, value);
-
-    props.onChange(newFormValues);
+    requirement.field.setValue(container, value).then(() => {
+      props.onChange(newFormValues);
+    });
   };
   if (requirement.field.fieldType !== FieldType.UNKNOWN) {
     container = (props.values[requirement.entityType] || {})[
