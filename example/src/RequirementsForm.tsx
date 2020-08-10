@@ -33,136 +33,130 @@ type Props = {
   values: FormValues;
   onChange: (values: FormValues) => void;
 };
-function RequirementsForm(props: Props) {
-  return (
-    <div>
-      {entitySection(props.schema, EntityType.ACCOUNT, props)}
-      {entitySection(props.schema, EntityType.UNKNOWN, props)}
-    </div>
-  );
-}
-
-function entitySection(
-  schema: OnboardingSchema,
-  entity: EntityType,
-  props: Props
-): ReactFragment {
-  switch (entity) {
-    case EntityType.ACCOUNT:
-    case EntityType.UNKNOWN:
-      return (
-        <React.Fragment>
-          <h3>{entity}</h3>
-          {formSection(EntityType.ACCOUNT, schema.fieldMap.get(entity), props)}
-        </React.Fragment>
-      );
-    default:
-      assertNever(entity);
-  }
-}
-
-function formSection(
-  entityType: EntityType,
-  requirements: Requirement[] | undefined,
-  props: Props
-): ReactFragment {
-  const formElements = (requirements || []).map((r) => (
-    <div key={r.field.id} className="p-field p-grid">
-      <label>
-        <div
-          className="p-col"
-          style={{ width: "100px", overflowWrap: "anywhere" }}
-        >
-          {r.field.name}
-        </div>
-        {makeRequirementElement(r, props)}
-      </label>
-    </div>
-  ));
-  return <React.Fragment>{formElements}</React.Fragment>;
-}
-
-function makeRequirementElement(
-  requirement: Requirement,
-  props: Props
-): ReactElement {
-  let container;
-  let value;
-  let setValueFn = (value: any) => {
-    const newFormValues = { ...props.values };
-    newFormValues[requirement.entityType] =
-      newFormValues[requirement.entityType] || {};
-
-    const container =
-      newFormValues[requirement.entityType][requirement.entityToken || ""] ||
-      {};
-    newFormValues[requirement.entityType][
-      requirement.entityToken || ""
-    ] = container;
-    requirement.field.setValue(container, value).then(() => {
-      props.onChange(newFormValues);
-    });
-  };
-  if (requirement.field.fieldType !== FieldType.UNKNOWN) {
-    container = (props.values[requirement.entityType] || {})[
-      requirement.entityToken || ""
-    ];
-    value = requirement.field.getValue(container || {}) || "";
+class RequirementsForm extends React.Component<Props, {}> {
+  render() {
+    return (
+      <div>
+        {this.entitySection(this.props.schema, EntityType.ACCOUNT)}
+        {this.entitySection(this.props.schema, EntityType.UNKNOWN)}
+      </div>
+    );
   }
 
-  let attributes;
-  switch (requirement.field.fieldType) {
-    case FieldType.TEXT:
-      attributes = requirement.field.attributes as TextAttributes;
-      let component;
-      switch (attributes.type) {
-        case TextType.SHORT:
-          component = (
-            <InputText
-              value={value}
-              onChange={(event) => setValueFn(event.currentTarget.value)}
-            />
-          );
-          break;
-        case TextType.LONG:
-          component = (
-            <InputTextarea
-              value={value}
-              onChange={(event) => setValueFn(event.currentTarget.value)}
-            />
-          );
-          break;
-        default:
-          assertNever(attributes.type);
-      }
-      return component;
-    case FieldType.ENUM:
-      attributes = requirement.field.attributes as EnumAttributes;
-      return (
-        <Dropdown
-          options={attributes.values}
-          value={value}
-          onChange={(event) => setValueFn(event.value)}
-        />
-      );
-    case FieldType.PHONE:
-      return (
-        <PhoneInput
-          placeholder="Enter phone number"
-          value={value}
-          onChange={(value) => setValueFn(value)}
-        />
-      );
-    case FieldType.URL:
-    case FieldType.EMAIL:
-      return (
-        <InputText
-          value={value}
-          onChange={(event) => setValueFn(event.currentTarget.value)}
-        />
-      );
-    default:
-      return <span>{requirement.requirementId}</span>;
+  entitySection(schema: OnboardingSchema, entity: EntityType): ReactFragment {
+    switch (entity) {
+      case EntityType.ACCOUNT:
+      case EntityType.UNKNOWN:
+        return (
+          <React.Fragment>
+            <h3>{entity}</h3>
+            {this.formSection(EntityType.ACCOUNT, schema.fieldMap.get(entity))}
+          </React.Fragment>
+        );
+      default:
+        assertNever(entity);
+    }
+  }
+
+  formSection(
+    entityType: EntityType,
+    requirements: Requirement[] | undefined
+  ): ReactFragment {
+    const formElements = (requirements || []).map((r) => (
+      <div key={r.field.id} className="p-field p-grid">
+        <label>
+          <div
+            className="p-col"
+            style={{ width: "100px", overflowWrap: "anywhere" }}
+          >
+            {r.field.name}
+          </div>
+          {this.makeRequirementElement(r)}
+        </label>
+      </div>
+    ));
+    return <React.Fragment>{formElements}</React.Fragment>;
+  }
+
+  makeRequirementElement(requirement: Requirement): ReactElement {
+    let container;
+    let value;
+    let setValueFn = (value: any) => {
+      const newFormValues = { ...this.props.values };
+      newFormValues[requirement.entityType] =
+        newFormValues[requirement.entityType] || {};
+
+      const container =
+        newFormValues[requirement.entityType][requirement.entityToken || ""] ||
+        {};
+      newFormValues[requirement.entityType][
+        requirement.entityToken || ""
+      ] = container;
+      requirement.field.setValue(container, value).then(() => {
+        this.props.onChange(newFormValues);
+      });
+    };
+    if (requirement.field.fieldType !== FieldType.UNKNOWN) {
+      container = (this.props.values[requirement.entityType] || {})[
+        requirement.entityToken || ""
+      ];
+      value = requirement.field.getValue(container || {}) || "";
+    }
+
+    let attributes;
+    switch (requirement.field.fieldType) {
+      case FieldType.TEXT:
+        attributes = requirement.field.attributes as TextAttributes;
+        let component;
+        switch (attributes.type) {
+          case TextType.SHORT:
+            component = (
+              <InputText
+                value={value}
+                onChange={(event) => setValueFn(event.currentTarget.value)}
+              />
+            );
+            break;
+          case TextType.LONG:
+            component = (
+              <InputTextarea
+                value={value}
+                onChange={(event) => setValueFn(event.currentTarget.value)}
+              />
+            );
+            break;
+          default:
+            assertNever(attributes.type);
+        }
+        return component;
+      case FieldType.ENUM:
+        attributes = requirement.field.attributes as EnumAttributes;
+        return (
+          <Dropdown
+            options={attributes.values}
+            value={value}
+            onChange={(event) => setValueFn(event.value)}
+          />
+        );
+      case FieldType.PHONE:
+        return (
+          <PhoneInput
+            placeholder="Enter phone number"
+            value={value}
+            onChange={(value) => setValueFn(value)}
+          />
+        );
+      case FieldType.URL:
+      case FieldType.EMAIL:
+        return (
+          <InputText
+            value={value}
+            onChange={(event) => setValueFn(event.currentTarget.value)}
+          />
+        );
+      default:
+        return <span>{requirement.requirementId}</span>;
+    }
   }
 }
 
