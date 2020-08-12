@@ -34,7 +34,19 @@ type Props = {
   values: FormValues;
   onChange: (values: FormValues) => void;
 };
-class RequirementsForm extends React.Component<Props, {}> {
+
+type State = {
+  resolvedValues: { [ley: string]: any };
+};
+
+class RequirementsForm extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      resolvedValues: {},
+    };
+  }
+
   render() {
     return (
       <div>
@@ -100,14 +112,11 @@ class RequirementsForm extends React.Component<Props, {}> {
       );
     };
 
-    if (requirement.field.fieldType !== FieldType.UNKNOWN) {
-      container = (this.props.values[requirement.entityType] || {})[
-        requirement.entityToken
-      ];
-      value =
-        RequirementsConverter.getValue(requirement.field, container || {}) ||
-        "";
-    }
+    container = (this.props.values[requirement.entityType] || {})[
+      requirement.entityToken
+    ];
+    value =
+      RequirementsConverter.getValue(requirement.field, container || {}) || "";
 
     let attributes;
     switch (requirement.field.fieldType) {
