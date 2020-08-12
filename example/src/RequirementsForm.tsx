@@ -5,6 +5,7 @@ import {
   OnboardingSchema,
   EntityType,
   Requirement,
+  RequirementsConverter,
 } from "stripe-onboarding-schema";
 import { assertNever } from "./util";
 import "primeicons/primeicons.css";
@@ -87,20 +88,25 @@ class RequirementsForm extends React.Component<Props, {}> {
         newFormValues[requirement.entityType] || {};
 
       const container =
-        newFormValues[requirement.entityType][requirement.entityToken || ""] ||
-        {};
+        newFormValues[requirement.entityType][requirement.entityToken] || {};
+
       newFormValues[requirement.entityType][
-        requirement.entityToken || ""
+        requirement.entityToken
       ] = container;
-      requirement.field.setValue(container, value).then(() => {
-        this.props.onChange(newFormValues);
-      });
+      RequirementsConverter.setValue(requirement.field, container, value).then(
+        () => {
+          this.props.onChange(newFormValues);
+        }
+      );
     };
+
     if (requirement.field.fieldType !== FieldType.UNKNOWN) {
       container = (this.props.values[requirement.entityType] || {})[
-        requirement.entityToken || ""
+        requirement.entityToken
       ];
-      value = requirement.field.getValue(container || {}) || "";
+      value =
+        RequirementsConverter.getValue(requirement.field, container || {}) ||
+        "";
     }
 
     let attributes;
