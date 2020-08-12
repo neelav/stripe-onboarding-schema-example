@@ -21,7 +21,8 @@ import TextAttributes, {
 
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import { Container } from "stripe-onboarding-schema/schema-core/Field";
+import Field, { Container } from "stripe-onboarding-schema/schema-core/Field";
+import FieldBundle from "stripe-onboarding-schema/schema-core/FieldBundle";
 
 export type FormValues = {
   [key: string]: {
@@ -51,6 +52,7 @@ class RequirementsForm extends React.Component<Props, State> {
     return (
       <div>
         {this.entitySection(this.props.schema, EntityType.ACCOUNT)}
+        {this.entitySection(this.props.schema, EntityType.PERSON)}
         {this.entitySection(this.props.schema, EntityType.UNKNOWN)}
       </div>
     );
@@ -59,6 +61,7 @@ class RequirementsForm extends React.Component<Props, State> {
   entitySection(schema: OnboardingSchema, entity: EntityType): ReactFragment {
     switch (entity) {
       case EntityType.ACCOUNT:
+      case EntityType.PERSON:
       case EntityType.UNKNOWN:
         return (
           <React.Fragment>
@@ -75,53 +78,68 @@ class RequirementsForm extends React.Component<Props, State> {
     entityType: EntityType,
     requirements: Requirement[] | undefined
   ): ReactFragment {
-    const formElements = (requirements || []).map((r) => (
-      <div key={r.field.id} className="p-field p-grid">
+    const formElements = (requirements || []).map((r) => {
+      const field = r.field;
+      if (field instanceof FieldBundle) {
+        return this.makeBundleElement(r, field);
+      }
+      return this.makeRequirementContainer(r, field);
+    });
+    return <React.Fragment>{formElements}</React.Fragment>;
+  }
+
+  makeRequirementContainer(
+    requirement: Requirement,
+    field: Field<any, any>
+  ): ReactElement {
+    return (
+      <div key={field.id} className="p-field p-grid">
         <label>
           <div
             className="p-col"
             style={{ width: "100px", overflowWrap: "anywhere" }}
           >
-            {r.field.name}
+            {field.name}
           </div>
-          {this.makeRequirementElement(r)}
+          {this.makeRequirementElement(requirement, field)}
         </label>
       </div>
-    ));
-    return <React.Fragment>{formElements}</React.Fragment>;
+    );
   }
 
-  makeRequirementElement(requirement: Requirement): ReactElement {
+  makeRequirementElement(
+    requirement: Requirement,
+    field: Field<any, any>
+  ): ReactElement {
     let container;
-    let value;
+    let value: any;
     let setValueFn = (value: any) => {
       const newFormValues = { ...this.props.values };
       newFormValues[requirement.entityType] =
         newFormValues[requirement.entityType] || {};
 
       const container =
-        newFormValues[requirement.entityType][requirement.entityToken] || {};
+        newFormValues[requirement.entityType][
+          requirement.entityToken || "__NEW__"
+        ] || {};
 
       newFormValues[requirement.entityType][
-        requirement.entityToken
+        requirement.entityToken || "__NEW__"
       ] = container;
-      RequirementsConverter.setValue(requirement.field, container, value).then(
-        () => {
-          this.props.onChange(newFormValues);
-        }
-      );
+      RequirementsConverter.setValue(field, container, value).then(() => {
+        this.props.onChange(newFormValues);
+      });
     };
 
     container = (this.props.values[requirement.entityType] || {})[
-      requirement.entityToken
+      requirement.entityToken || "__NEW__"
     ];
-    value =
-      RequirementsConverter.getValue(requirement.field, container || {}) || "";
+    value = RequirementsConverter.getValue(field, container || {}) || "";
 
     let attributes;
-    switch (requirement.field.fieldType) {
+    switch (field.fieldType) {
       case FieldType.TEXT:
-        attributes = requirement.field.attributes as TextAttributes;
+        attributes = field.attributes as TextAttributes;
         let component;
         switch (attributes.type) {
           case TextType.SHORT:
@@ -145,7 +163,7 @@ class RequirementsForm extends React.Component<Props, State> {
         }
         return component;
       case FieldType.ENUM:
-        attributes = requirement.field.attributes as EnumAttributes;
+        attributes = field.attributes as EnumAttributes;
         return (
           <Dropdown
             options={attributes.values}
@@ -172,6 +190,19 @@ class RequirementsForm extends React.Component<Props, State> {
       default:
         return <span>{requirement.requirementId}</span>;
     }
+  }
+
+  makeBundleElement(
+    requirement: Requirement,
+    bundle: FieldBundle<any>
+  ): ReactElement {
+    return (
+      <React.Fragment key={bundle.id}>
+        {bundle.fields.map((f) =>
+          this.makeRequirementContainer(requirement, f)
+        )}
+      </React.Fragment>
+    );
   }
 }
 
