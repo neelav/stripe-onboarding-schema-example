@@ -10,9 +10,9 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-phone-number-input": "^3.0.25",
-    "react-scripts": "3.4.1",
+    "react-scripts": "^3.4.3",
     "stripe": "^8.81.0",
-    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema#release-0.0.17"
+    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema#release-0.0.21"
   },
   "scripts": {
     "start": "react-scripts start",
