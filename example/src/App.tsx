@@ -46,6 +46,7 @@ class App extends React.Component<{}, State> {
         ) as Stripe.Account.Requirements;
 
         requirementsSchema = requirementsConverter.convertRequirements(
+          "acct_123abc",
           parsedRequirements,
           this.state.requirementsType
         );
