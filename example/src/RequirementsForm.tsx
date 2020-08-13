@@ -171,6 +171,7 @@ class RequirementsForm extends React.Component<Props, State> {
         attributes = field.attributes as EnumAttributes;
         return (
           <Dropdown
+            placeholder="Select"
             options={attributes.values}
             value={value}
             onChange={(event) => setValueFn(event.value)}
