@@ -15,6 +15,9 @@ import "primeflex/primeflex.css";
 import FieldType from "stripe-onboarding-schema/schema-core/fieldtypes/FieldType";
 import { Dropdown } from "primereact/dropdown";
 import EnumAttributes from "stripe-onboarding-schema/schema-core/fieldtypes/EnumAttributes";
+import DateAttributes, {
+  DateType,
+} from "stripe-onboarding-schema/schema-core/fieldtypes/DateAttributes";
 import TextAttributes, {
   TextType,
 } from "stripe-onboarding-schema/schema-core/fieldtypes/TextAttributes";
@@ -24,6 +27,7 @@ import PhoneInput from "react-phone-number-input";
 import Field, { Container } from "stripe-onboarding-schema/schema-core/Field";
 import FieldBundle from "stripe-onboarding-schema/schema-core/FieldBundle";
 import Address from "./Address";
+import DateOfBirth from "./DateOfBirth";
 
 export type FormValues = {
   [key: string]: {
@@ -190,6 +194,15 @@ class RequirementsForm extends React.Component<Props, State> {
         );
       case FieldType.ADDRESS:
         return <Address value={value} onChange={setValueFn} />;
+      case FieldType.DATE:
+        attributes = field.attributes as DateAttributes;
+        switch (attributes.type) {
+          case DateType.DATE_OF_BIRTH:
+            return <DateOfBirth value={value} onChange={setValueFn} />;
+          default:
+            assertNever(attributes.type);
+        }
+        break;
       default:
         return <span>{requirement.requirementId}</span>;
     }
