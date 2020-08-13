@@ -186,6 +186,7 @@ class RequirementsForm extends React.Component<Props, State> {
         );
       case FieldType.URL:
       case FieldType.EMAIL:
+      case FieldType.ID_NUMBER:
         return (
           <InputText
             value={value}

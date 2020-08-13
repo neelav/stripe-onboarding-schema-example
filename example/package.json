@@ -12,7 +12,7 @@
     "react-phone-number-input": "^3.0.25",
     "react-scripts": "^3.4.3",
     "stripe": "^8.81.0",
-    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema#release-0.0.25"
+    "stripe-onboarding-schema": "github:neelav/stripe-onboarding-schema#release-0.0.26"
   },
   "scripts": {
     "start": "react-scripts start",
