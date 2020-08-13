@@ -23,6 +23,7 @@ import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
 import Field, { Container } from "stripe-onboarding-schema/schema-core/Field";
 import FieldBundle from "stripe-onboarding-schema/schema-core/FieldBundle";
+import Address from "./Address";
 
 export type FormValues = {
   [key: string]: {
@@ -97,7 +98,7 @@ class RequirementsForm extends React.Component<Props, State> {
         <label>
           <div
             className="p-col"
-            style={{ width: "100px", overflowWrap: "anywhere" }}
+            style={{ minWidth: "100px", overflowWrap: "anywhere" }}
           >
             {field.name}
           </div>
@@ -187,6 +188,8 @@ class RequirementsForm extends React.Component<Props, State> {
             onChange={(event) => setValueFn(event.currentTarget.value)}
           />
         );
+      case FieldType.ADDRESS:
+        return <Address value={value} onChange={setValueFn} />;
       default:
         return <span>{requirement.requirementId}</span>;
     }
