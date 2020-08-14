@@ -29,14 +29,41 @@ type State = {
 class App extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
+    const queryParams = new URLSearchParams(window.location.search);
+    const requirementsTypeUrlParam = JSON.parse(
+      queryParams.get("requirementsType") || "null"
+    ) as RequirementsType | null;
+
+    const countryUrlParam = JSON.parse(
+      queryParams.get("country") || "null"
+    ) as Country | null;
+    const requirementsUrlParam = queryParams.get("requirements");
+    const formValuesUrlParam = queryParams.get("formValues");
+
     this.state = {
-      requirementsType: RequirementsType.PAST_DUE,
-      country: Country.US,
-      formValues: {},
+      requirements: JSON.parse(requirementsUrlParam || "null") || undefined,
+      requirementsType: requirementsTypeUrlParam
+        ? requirementsTypeUrlParam
+        : RequirementsType.PAST_DUE,
+      country: countryUrlParam ? countryUrlParam : Country.US,
+      formValues: formValuesUrlParam ? JSON.parse(formValuesUrlParam) : {},
     };
   }
 
+  componentDidMount() {}
+
   render() {
+    const jsonState = Object.fromEntries(
+      Object.entries(this.state).map((e) => [
+        e[0],
+        e[1] ? JSON.stringify(e[1]) : "",
+      ])
+    );
+    window.history.replaceState(
+      {},
+      "",
+      "?" + new URLSearchParams(jsonState).toString()
+    );
     let requirementsSchema: OnboardingSchema | undefined;
     let uiSchemaJson: string | undefined;
     if (this.state.requirements) {

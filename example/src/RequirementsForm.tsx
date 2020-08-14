@@ -24,14 +24,14 @@ import TextAttributes, {
 
 import "react-phone-number-input/style.css";
 import PhoneInput from "react-phone-number-input";
-import Field, { Container } from "stripe-onboarding-schema/schema-core/Field";
+import Field, { Params } from "stripe-onboarding-schema/schema-core/Field";
 import FieldBundle from "stripe-onboarding-schema/schema-core/FieldBundle";
 import Address from "./Address";
 import DateOfBirth from "./DateOfBirth";
 
 export type FormValues = {
   [key: string]: {
-    [key: string]: Container;
+    [key: string]: Params;
   };
 };
 
@@ -116,30 +116,30 @@ class RequirementsForm extends React.Component<Props, State> {
     requirement: Requirement,
     field: Field<any, any>
   ): ReactElement {
-    let container;
+    let params;
     let value: any;
     let setValueFn = (value: any) => {
       const newFormValues = { ...this.props.values };
       newFormValues[requirement.entityType] =
         newFormValues[requirement.entityType] || {};
 
-      const container =
+      const params =
         newFormValues[requirement.entityType][
           requirement.entityToken || "__NEW__"
         ] || {};
 
       newFormValues[requirement.entityType][
         requirement.entityToken || "__NEW__"
-      ] = container;
-      RequirementsConverter.setValue(field, container, value).then(() => {
+      ] = params;
+      RequirementsConverter.setValue(field, params, value).then(() => {
         this.props.onChange(newFormValues);
       });
     };
 
-    container = (this.props.values[requirement.entityType] || {})[
+    params = (this.props.values[requirement.entityType] || {})[
       requirement.entityToken || "__NEW__"
     ];
-    value = RequirementsConverter.getValue(field, container || {}) || "";
+    value = RequirementsConverter.getValue(field, params || {}) || "";
 
     let attributes;
     switch (field.fieldType) {
