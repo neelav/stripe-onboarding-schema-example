@@ -1,6 +1,6 @@
 # stripe-onboarding-schema-example
 
-Example web server using [stripe-onboarding-schema](https://github.com/neelav/stripe-onboarding-schema)
+Example web server using [stripe-onboarding-schema](https://github.com/neelav/stripe-onboarding-schema). This project is intended to be used as an example/playground of how to build a dynamic metadata driven onboarding form.
 
 ## Usage
 
