@@ -5,6 +5,7 @@ Example web server using [stripe-onboarding-schema](https://github.com/neelav/st
 ## Usage
 
 ```
+cd example
 npm install
 npm start
 ```
